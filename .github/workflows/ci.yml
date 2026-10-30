@@ -1,0 +1,25 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v7
+      - name: Check scripts
+        run: bash -n build.sh scripts/package-release.sh
+      - name: Run tests
+        run: swift test
+      - name: Test release packaging
+        run: bash scripts/package-release.sh "$(cat version.txt)"
