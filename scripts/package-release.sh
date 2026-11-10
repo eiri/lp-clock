@@ -29,15 +29,17 @@ cask "lp-clock" do
   desc "Binary clock for the Launchpad Mini MK3"
   homepage "https://github.com/eiri/lp-clock"
 
-  depends_on macos: ">= :ventura"
+  depends_on macos: >= :ventura
 
   app "LP Clock.app"
 
   # The prototype uses ad-hoc signing, without Apple notarization.
   postflight do
-    system_command "/usr/bin/xattr",
-                   args: ["-dr", "com.apple.quarantine", "#{appdir}/LP Clock.app"],
-                   must_succeed: false
+    on_macos do
+        system_command "/usr/bin/xattr",
+            args: ["-dr", "com.apple.quarantine", "#{appdir}/LP Clock.app"],
+            must_succeed: false
+    end
   end
 
   uninstall quit: "ca.eiri.lp-clock"
